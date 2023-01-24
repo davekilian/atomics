@@ -1,0 +1,131 @@
+---
+layout: default
+---
+<div style="display: flex; flex-direction: row">
+    <div class="hidden-print hidden-sm hidden-xs" style="width: 25ch; min-width: 25ch; margin-left: 1em">
+        <div class="navigation" style="border-right: 1px solid #eee; padding-right: 1em">
+            <h1 style="font-weight: 400; margin-bottom: 0">Primer</h1>
+            <h2 style="font-weight: 400; margin-top: 0; margin-bottom: 0">How Computers Work</h2>
+            <br>
+            <span>A book by <a href="https://www.davekilian.com/">Dave Kilian</a></span>
+            <hr>
+            {% include primer-toc.html html=content %}
+        </div>
+    </div>
+    <div style="margin-left: 1em; margin-right: 1em; flex: 1 1 0">
+        <div class="post-container" id="chapter">
+            <div style="margin-top:0">
+                <div class="hidden-print visible-xs visible-sm navigation">
+                    <h1 style="font-weight: 400">Primer: How Computers Work</h1>
+                    <span>A book by <a href="https://www.davekilian.com/">Dave Kilian</a></span>
+                    <br><br>
+                    <a href="javascript:void(0)" onclick="toggleToc();">Table of Contents</a>
+                    <span id="toc-indicator" style="margin-left: .3em; font-size: 60%; line-height: 60%;%">▼</span>
+                    <hr>
+                </div>
+                <h1 class="post-title" id="title">{{ page.title }}</h1>
+            </div>
+            <div class="post-content" id="content">
+                {{ content }}
+                <hr/>
+                <div class="navigation">
+                    <a id="nav-prev" style="float:left; display:none">Previous</a>
+                    <a id="nav-next" style="float:right; display:none">Next</a>
+                    <center><span style="color: #999">Copyright &copy; Dave Kilian 2022</span></center>
+                </div>
+            </div>
+            <div class="navigation" id="mobile-toc" style="display:none">
+                {% include primer-toc.html html=content %}
+            </div>
+            <span style="padding-bottom: 6em">&nbsp;</span>
+            <script type="text/javascript">
+                function toggleToc() {
+
+                    var indicator = document.getElementById('toc-indicator');
+                    var title = document.getElementById('title');
+                    var content = document.getElementById('content');
+                    var toc = document.getElementById('mobile-toc');
+
+                    if (toc.style.display === 'none') {
+
+                        indicator.innerHTML = '▲';
+                        title.style.display = 'none';
+                        content.style.display = 'none';
+                        toc.style.display = 'block';
+
+                    } else {
+
+                        indicator.innerHTML = '▼';
+                        toc.style.display = 'none';
+                        title.style.display = 'block';
+                        content.style.display = 'block';
+                    }
+                }
+
+                (function() {
+                    function forEach(coll, cb) { Array.prototype.forEach.call(coll, cb) }
+                    function expand(url) {
+                        var temp = document.createElement('a');
+                        temp.href = url;
+                        return temp.href;
+                    }
+
+                    var prev, next;
+                    forEach(document.getElementsByClassName('toc'), function(toc) {
+                        var links = [ ];
+                        prev = undefined;
+                        next = undefined;
+
+                        forEach(toc.getElementsByTagName('a'), function(link) {
+                            links.push(link);
+                        });
+
+                        for (var i = 0; i < links.length; ++i) {
+                            var link = links[i];
+
+                            var match = false;
+                            if (window.location.pathname == '{{ '/' | relative_url }}') {
+                                match = (link.href == expand('{{ '/index.html' | relative_url }}'));
+                            } else {
+                                match = (link.href == window.location.href);
+                            }
+
+                            if (match) {
+
+                                link.removeAttribute('href');
+                                link.style.color = 'black';
+
+                                if (i > 0) {
+                                    prev = links[i - 1].href;
+                                }
+                                if (i + 1 < links.length) {
+                                    next = links[i + 1].href;
+                                }
+                            }
+                        }
+
+                        if (!!prev) {
+                            var link = document.getElementById('nav-prev');
+                            link.href = prev;
+                            link.style.display = 'inline';
+                        }
+
+                        if (!!next) {
+                            var link = document.getElementById('nav-next');
+                            link.href = next;
+                            link.style.display = 'inline';
+                        }
+                    });
+
+                    document.addEventListener('keydown', function(e) {
+                        if (e.keyCode == 37 && !!prev) {
+                            window.location.href = prev;
+                        } else if (e.keyCode == 39 && !!next) {
+                            window.location.href = next;
+                        }
+                    });
+                })();
+            </script>
+        </div>
+    </div>
+</div>
